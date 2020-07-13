@@ -4,77 +4,69 @@
 
 #include "fisi_vector.h"
 
-#define N 1000000
-#define S 1000
-#define V 100
+#define N 8
+#define SEMILLA 1000
+#define VECES 100
 
+int n[N] = {
+    1000, 10000, 50000,
+    100000, 200000, 500000,
+    750000, 1000000};
+//int a[N];  //de esta manera 1
 
+double dursec[N], durpar[N];
 
-long suma_prefijo(int ini ,int fin,int v[]){
-    long s=0;
-    for (int i = ini; i < fin ; i++)
-    {
-        s+= v[i];
-    }
-    
-    return s;
-}
-int a[N];
-
-//de esta manera 
-//manera 1
-
-
-int main(int argc,char **argv ){
+int main(int argc, char **argv)
+{
     //o de esta manera
-   // int *a;
-   // a=(int *)calloc(N,sizeof(int))
-   int veces;
-    long suma,sumapar,suma1,suma2;
-    double inicio,duracion,dursec,durpar;
+    int dim;
 
-    //inicializa
-    srand(S);
-    aleatorio(0,N,a);
+    for (dim = 0; dim < N; dim++)
+    {
 
-    // Suma secuencial
-     duracion=0.0;
-    for (veces=0 ; veces<V ; veces++)
-    {   
-       
-        inicio = omp_get_wtime();
-        suma=suma_prefijo(0,N,a);
-        duracion += (omp_get_wtime()-inicio);
+        int *a;
+        int veces;
+        long suma, sumapar, suma1, suma2;
+        double inicio, duracion;
 
-    }
-    dursec = duracion/V;
-    printf("Suma=%li Tiempo Secuencial %f\n",suma,dursec);
+        //inicializa
+        srand(SEMILLA);
+        a = (int *)calloc(n[dim], sizeof(int));
+        aleatorio(0, n[dim], a);
 
-    duracion=0.0;
-   for (veces=0 ; veces<V ; veces++)
-    { 
-        
-        inicio = omp_get_wtime();
-
-    #pragma omp parallel sections 
-    {   
-        suma1=suma_prefijo(0,N/2,a);
-        #pragma omp section
+        // Suma secuencial
+        duracion = 0.0;
+        for (veces = 0; veces < VECES; veces++)
         {
-             suma2=suma_prefijo(N/2,N,a);
-        }
-        
-        
-    }
-    sumapar=suma1+suma2;
-    duracion += (omp_get_wtime()-inicio);
-    }
-    durpar = duracion/V;
-    printf("Suma=%li Tiempo Paralelo %f",sumapar,durpar);
 
-   // free(a)
+            inicio = omp_get_wtime();
+            suma = suma_prefijo(0, n[dim], a);
+            duracion += (omp_get_wtime() - inicio);
+        }
+        dursec[dim] = duracion / VECES;
+        //---------------------------------------
+
+        //Suma paralela
+        duracion = 0.0;
+        for (veces = 0; veces < VECES; veces++)
+        {
+
+            inicio = omp_get_wtime();
+
+#pragma omp parallel sections
+            {
+                suma1 = suma_prefijo(0, n[dim] / 2, a);
+#pragma omp section
+                {
+                    suma2 = suma_prefijo(n[dim] / 2, n[dim], a);
+                }
+            }
+            sumapar = suma1 + suma2;
+            duracion += (omp_get_wtime() - inicio);
+        }
+        durpar[dim] = duracion / VECES;
+
+        free(a);
+    }
     return 0;
 }
-
-
-
