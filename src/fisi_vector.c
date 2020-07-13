@@ -20,3 +20,11 @@ void sumar( int ini, int fin, int a[], int b[], int c[]) {
        c[i] = a[i] + b[i];
     }
 }
+long suma_prefijo(int ini ,int fin,int v[]){
+    long s=0;
+    for (int i = ini; i < fin ; i++)
+    {
+        s+= v[i];
+    }
+    return s;
+}

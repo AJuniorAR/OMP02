@@ -16,11 +16,12 @@ int n[N] = {
 
 double dursec[N], durpar[N];
 
+
 int main(int argc, char **argv)
 {
     //o de esta manera
     int dim;
-
+    printf("%s,%s,%s,%s\n","nro","N","dursec","durpar");
     for (dim = 0; dim < N; dim++)
     {
 
@@ -65,8 +66,10 @@ int main(int argc, char **argv)
             duracion += (omp_get_wtime() - inicio);
         }
         durpar[dim] = duracion / VECES;
-
+        
+        printf("%i,%i,%f,%f\n",dim,n[dim],dursec[dim],durpar[dim]);
         free(a);
     }
+    
     return 0;
 }

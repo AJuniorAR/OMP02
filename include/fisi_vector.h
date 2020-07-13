@@ -8,5 +8,5 @@ void ceros( int ini, int fin, int v[]);
 void aleatorio(int ini, int fin, int v[]) ;
 
 void sumar( int ini, int fin, int a[], int b[], int c[]) ;
-
+long suma_prefijo(int ini ,int fin,int v[]);
 #endif
